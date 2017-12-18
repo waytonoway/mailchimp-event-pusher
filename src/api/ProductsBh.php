@@ -26,4 +26,16 @@ class ProductsBh extends Products
     {
         return self::execute("PATCH", "ecommerce/stores/{$store_id}/products/{$product_id}", $data);
     }
+
+    /**
+     * addProduct
+     * @param string $store_id
+     * @param array $data
+     * @return mixed|object
+     */
+    public function createProduct($store_id, array $data = [])
+    {
+        return self::execute("POST", "ecommerce/stores/{$store_id}/products", $data);
+
+    }
 }
