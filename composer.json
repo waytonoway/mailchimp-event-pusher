@@ -1,13 +1,12 @@
 {
     "name": "bh/mailchimp-event-pusher",
     "description": "MailChimp Eventer",
-    "type": "library",
     "keywords"  : [
         "mailchimp",
         "api",
         "php"
     ], 
-    "license": "MIT",
+    "license": "proprietary",
     "require": {
         "php": ">=5.3.19",
         "nblakefriend/mailchimp-apiv3": "*"
