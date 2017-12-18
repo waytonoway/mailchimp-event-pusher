@@ -48,3 +48,4 @@ class MailchimpEvent
         return $this->data;
     }
 }
+

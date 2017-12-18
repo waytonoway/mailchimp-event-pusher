@@ -8,8 +8,6 @@
 
 namespace bh\mailchimp;
 
-
-use MailChimp\MailChimp;
 use yii\base\Event;
 use yii\db\ActiveRecord;
 
@@ -19,21 +17,77 @@ use yii\db\ActiveRecord;
  */
 class MailchimpEventPusher
 {
+    /** @var string $parent_class */
+    private $parent_class = 'MailchimpEventInterface';
+
+    /**
+     * init
+     */
     public function init()
     {
-        Event::on('MailchimpEventPusher\MailchimpEventInterface', ActiveRecord::EVENT_AFTER_UPDATE, function ($event) {
+        $this->getEvents();
+    }
+
+    /**
+     * getEvents
+     */
+    private function getEvents()
+    {
+        Event::on($this->parent_class, ActiveRecord::EVENT_AFTER_INSERT, function ($event) {
             $sender = $event->sender;
-            if ($sender instanceof MailchimpEventInterface) {
+            if ($sender instanceof $this->parent_class) {
                 $mailchimpEvent = $sender->getMailchimpEvent();
-                (new MailchimpManager())->saveCustomer($mailchimpEvent);
+
+                switch ($mailchimpEvent->getEntityType()) {
+                    case 'product':
+                        (new MailchimpManager())->updateProduct($mailchimpEvent);
+                        break;
+                    case 'customer':
+                        (new MailchimpManager())->saveCustomer($mailchimpEvent);
+                        break;
+                    case 'basket':
+                        (new MailchimpManager())->createCart($mailchimpEvent);
+                        break;
+                    case 'order':
+                        (new MailchimpManager())->createOrder($mailchimpEvent);
+                        break;
+                }
             }
         });
 
-        Event::on('MailchimpEventPusher\MailchimpEventInterface', ActiveRecord::EVENT_AFTER_UPDATE, function ($event) {
+        Event::on($this->parent_class, ActiveRecord::EVENT_AFTER_UPDATE, function ($event) {
             $sender = $event->sender;
-            if ($sender instanceof MailchimpEventInterface) {
+            if ($sender instanceof $this->parent_class) {
                 $mailchimpEvent = $sender->getMailchimpEvent();
-                (new MailchimpManager())->saveCustomer($mailchimpEvent);
+
+                switch ($mailchimpEvent->getEntityType()) {
+                    case 'product':
+                        (new MailchimpManager())->updateProduct($mailchimpEvent);
+                        break;
+                    case 'customer':
+                        (new MailchimpManager())->saveCustomer($mailchimpEvent);
+                        break;
+                    case 'basket':
+                        (new MailchimpManager())->updateCart($mailchimpEvent);
+                        break;
+                    case 'order':
+                        (new MailchimpManager())->updateOrder($mailchimpEvent);
+                        break;
+                }
+
+            }
+        });
+
+        //TODO добавить удаление на какой-о флаг внутки передавайемой data, т.к. нет физического удаления
+        Event::on($this->parent_class, ActiveRecord::EVENT_AFTER_DELETE, function ($event) {
+            $sender = $event->sender;
+            if ($sender instanceof $this->parent_class) {
+                $mailchimpEvent = $sender->getMailchimpEvent();
+                switch ($mailchimpEvent->getEntityType()) {
+                    case 'product':
+                        (new MailchimpManager())->deleteProduct($mailchimpEvent);
+                        break;
+                }
             }
         });
     }
