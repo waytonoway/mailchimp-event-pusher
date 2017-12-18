@@ -6,14 +6,14 @@
         "mailchimp",
         "api",
         "php"
-    ],
+    ], 
     "license": "MIT",
     "require": {
         "php": ">=5.3.19",
         "nblakefriend/mailchimp-apiv3": "*"
     },
     "autoload": {
-        "psr-4": { "unklefedor\\eventpusher\\": "src/" }
+        "psr-4": { "bh\\mailchimp-event-pusher\\": "src/" }
     },
     "homepage": "https://github.com/waytonoway/mailchimp-event-pusher.git",
     "authors": [
@@ -22,5 +22,5 @@
            "email": "katya@breadhead.ru"
        }
    ],
-   "minimum-stability": "dev"
+   "minimum-stability": "stable",
 }
