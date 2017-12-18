@@ -22,5 +22,5 @@
            "email": "katya@breadhead.ru"
        }
    ],
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
