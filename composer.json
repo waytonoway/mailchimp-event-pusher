@@ -1,0 +1,26 @@
+{
+    "name": "bh/mailchimp-event-pusher",
+    "description": "MailChimp Eventer",
+    "type": "library",
+    "keywords"  : [
+        "mailchimp",
+        "api",
+        "php"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.19",
+        "nblakefriend/mailchimp-apiv3": "*"
+    },
+    "autoload": {
+        "psr-4": { "unklefedor\\eventpusher\\": "src/" }
+    },
+    "homepage": "https://github.com/waytonoway/mailchimp-event-pusher.git",
+    "authors": [
+       {
+           "name": "Kate Bogdanova",
+           "email": "katya@breadhead.ru"
+       }
+   ],
+   "minimum-stability": "dev"
+}
