@@ -5,7 +5,8 @@
         "mailchimp",
         "api",
         "php"
-    ], 
+    ],
+    "version": 0.0.5
     "license": "proprietary",
     "require": {
         "php": ">=5.3.19",
