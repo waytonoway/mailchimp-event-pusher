@@ -6,7 +6,7 @@
  * Time: 13:15
  */
 
-namespace bh\mailchimp;
+namespace bh\mailchimp\api;
 
 
 use MailChimp\Ecommerce\Carts;

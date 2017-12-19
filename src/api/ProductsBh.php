@@ -5,7 +5,7 @@
  * Date: 14.12.2017
  * Time: 15:52
  */
-namespace bh\mailchimp;
+namespace bh\mailchimp\api;
 
 use MailChimp\Ecommerce\Products;
 
