@@ -18,7 +18,12 @@ use yii\db\ActiveRecord;
 class MailchimpEventPusher
 {
     /** @var string $parent_class */
-    private $parent_class = 'MailchimpEventInterface';
+    private $parent_class = 'bh\mailchimp\MailchimpEventInterface';
+
+    public function __construct()
+    {
+        $this->init();
+    }
 
     /**
      * init

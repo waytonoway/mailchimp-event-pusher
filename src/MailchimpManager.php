@@ -7,6 +7,9 @@
  */
 namespace bh\mailchimp;
 
+use bh\mailchimp\api\CartsBh;
+use bh\mailchimp\api\OrdersBh;
+use bh\mailchimp\api\ProductsBh;
 use MailChimp\MailChimp;
 use yii\caching\FileCache;
 
@@ -60,7 +63,7 @@ class MailchimpManager
      */
     public function getOrders()
     {
-        return $this->mcAgent->ecommerce()->orders();
+        return new OrdersBh();
     }
 
 
@@ -74,24 +77,24 @@ class MailchimpManager
     private function makeCall($object, $method, $args)
     {
         $answer = call_user_func_array(array($object, $method), $args );
-        print_r($answer);
+        //print_r($answer);
         return (int)$answer->status > 0 ? false : $answer;
     }
 
     /**
      * exportProducts
-     * @param array[] $products
-     *
-    public function exportProducts(array $products)
+     * @param array $events
+     */
+    public function exportProducts(array $events)
     {
-        foreach ($products as $item) {
-            if ($product = $this->getProductExternal($item)) {
-                $this->updateProduct($item, (array)$product);
+        foreach ($events as $event) {
+            if ($product = $this->getProductExternal($event->getEntityId())) {
+                $this->updateProduct($event);
             } else {
-                $this->addProduct($item);
+                $this->addProduct($event);
             }
         }
-    }*/
+    }
 
     /**
      * saveCustomer
@@ -150,16 +153,25 @@ class MailchimpManager
      */
     public function updateProduct(MailchimpEvent $event)
     {
-        $product = (array)$this->getProductExternal($event->getEntityId());
-        $itemData = $event->getData();
+        return $this->__updateProductExternal($event->getEntityId(), $event->getData());
+    }
 
+    /**
+     * __updateProductExternal
+     * @param $id
+     * @param $itemData
+     * @return bool
+     */
+    private function __updateProductExternal($id, $itemData)
+    {
+        $product = (array)$this->getProductExternal($id);
         if ($product['type'] != $itemData['type'] || count($product['variants']) <> count($itemData['variants'])) {
             $newVariants = $itemData['variants'];
             $oldVariants = $product['variants'];
             //удаляем старые варинаты и записываем новые (и изменяем последний из старых на новый, т.к. полностью все удалить нельзя)
             if ($oldVariants) {
                 foreach ($oldVariants as $var) {
-                    if (!$this->makeCall($this->getProducts(), 'deleteVariant', [$this->store_id, $event->getEntityId(), $var->id])) {
+                    if (!$this->makeCall($this->getProducts(), 'deleteVariant', [$this->store_id, $id, $var->id])) {
                         $found = false;
                         foreach ($newVariants as $variant) {
                             if ($variant['id'] == $var->id) {
@@ -175,20 +187,21 @@ class MailchimpManager
 
             };
 
-            $this->makeCall($this->getProducts(), 'updateProduct', [$this->store_id, $event->getEntityId(), $event->getData()]);
+            $this->makeCall($this->getProducts(), 'updateProduct', [$this->store_id, $id, $itemData]);
 
             if ($toUpdateVariant) {
-                $this->makeCall($this->getProducts(), 'deleteVariant', [$this->store_id, $event->getEntityId(), $toUpdateVariant->id]);
+                $this->makeCall($this->getProducts(), 'deleteVariant', [$this->store_id, $id, $toUpdateVariant->id]);
             }
         } else {
-            $this->makeCall($this->getProducts(), 'updateProduct', [$this->store_id, (string)$event->getEntityId(),$event->getData()]);
+            $this->makeCall($this->getProducts(), 'updateProduct', [$this->store_id, (string)$id, $itemData]);
         };
 
-        $this->deleteProductCache($event->getEntityId());
-
+        //die('send');
+        $this->deleteProductCache($id);
+        
         return true;
     }
-
+    
     /**
      * getProductVariantsExternal
      * @param string $id
@@ -273,7 +286,8 @@ class MailchimpManager
      * @param string $id
      * @return bool|mixed
      */
-    public function getCart(string $id)  {
+    public function getCart(string $id)
+    {
         $cacheKey = 'carts_'.$this->store_id.'_'.$id;
         $obCache = (new FileCache());
         if (!$answer = $obCache->get($cacheKey)) {
@@ -285,6 +299,31 @@ class MailchimpManager
         return $answer;
     }
 
+    public function getCartsExternal()
+    {
+        $cacheKey = 'carts_'.$this->store_id;
+        $obCache = (new FileCache());
+        if (!$answer = $obCache->get($cacheKey)) {
+            if ($answer = $this->makeCall($this->getCarts(), 'getCarts', [$this->store_id])) {
+                $obCache->add($cacheKey, $answer, 3600);
+            }
+        };
+
+        return $answer;
+    }
+
+    public function getOrdersExternal()
+    {
+        $cacheKey = 'carts_'.$this->store_id;
+        $obCache = (new FileCache());
+        if (!$answer = $obCache->get($cacheKey)) {
+            if ($answer = $this->makeCall($this->getCarts(), 'getOrders', [$this->store_id])) {
+                $obCache->add($cacheKey, $answer, 3600);
+            }
+        };
+
+        return $answer;
+    }
 
     /**
      * createOrder
