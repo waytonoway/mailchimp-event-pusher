@@ -6,7 +6,6 @@
         "api",
         "php"
     ],
-    "version": "1.0",
     "license": "proprietary",
     "require": {
         "php": ">=5.3.19",
