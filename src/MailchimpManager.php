@@ -5,7 +5,7 @@
  * Date: 14.12.2017
  * Time: 13:45
  */
-namespace bh\mailchimp;
+namespace bh\mailchimp-event-pusher;
 
 use MailChimp\MailChimp;
 use yii\caching\FileCache;
