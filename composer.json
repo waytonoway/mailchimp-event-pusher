@@ -12,7 +12,7 @@
         "nblakefriend/mailchimp-apiv3": "^1.0"
     },
     "autoload": {
-        "psr-4": { "bh\\mailchimp-event-pusher\\": "src/" }
+        "psr-4": { "bh\\mailchimp\\": "src/" }
     },
     "homepage": "https://github.com/waytonoway/mailchimp-event-pusher.git",
     "authors": [
