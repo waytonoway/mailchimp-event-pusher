@@ -8,6 +8,7 @@
 
 namespace bh\mailchimp;
 
+use app\models\BasketModel;
 use yii\base\Event;
 use yii\db\ActiveRecord;
 
@@ -18,7 +19,12 @@ use yii\db\ActiveRecord;
 class MailchimpEventPusher
 {
     /** @var string $parent_class */
-    private $parent_class = 'MailchimpEventInterface';
+    private $parent_class = 'bh\mailchimp\MailchimpEventInterface';
+
+    public function __construct()
+    {
+        $this->init();
+    }
 
     /**
      * init
@@ -49,17 +55,18 @@ class MailchimpEventPusher
                         (new MailchimpManager())->createCart($mailchimpEvent);
                         break;
                     case 'order':
-                        (new MailchimpManager())->createOrder($mailchimpEvent);
+                        //(new MailchimpManager())->createOrder($mailchimpEvent);
                         break;
                 }
             }
         });
 
         Event::on($this->parent_class, ActiveRecord::EVENT_AFTER_UPDATE, function ($event) {
+            /** @var MailchimpEventInterface $sender */
             $sender = $event->sender;
-            if ($sender instanceof $this->parent_class) {
-                $mailchimpEvent = $sender->getMailchimpEvent();
 
+            /** @var MailchimpEvent $mailchimpEvent*/
+            if ($mailchimpEvent = $sender->getMailchimpEvent()) {
                 switch ($mailchimpEvent->getEntityType()) {
                     case 'product':
                         (new MailchimpManager())->updateProduct($mailchimpEvent);
@@ -74,8 +81,8 @@ class MailchimpEventPusher
                         (new MailchimpManager())->updateOrder($mailchimpEvent);
                         break;
                 }
-
             }
+
         });
 
         //TODO добавить удаление на какой-о флаг внутки передавайемой data, т.к. нет физического удаления
