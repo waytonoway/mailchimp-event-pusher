@@ -6,7 +6,7 @@
  * Time: 13:29
  */
 
-namespace bh\mailchimp;
+namespace bh\mailchimp\api;
 
 use MailChimp\Ecommerce\Orders;
 
