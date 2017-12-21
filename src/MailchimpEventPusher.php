@@ -92,7 +92,7 @@ class MailchimpEventPusher
                 $mailchimpEvent = $sender->getMailchimpEvent();
                 switch ($mailchimpEvent->getEntityType()) {
                     case 'product':
-                        (new MailchimpManager())->deleteProduct($mailchimpEvent);
+                        (new MailchimpManager())->removeProduct($mailchimpEvent);
                         break;
                 }
             }
