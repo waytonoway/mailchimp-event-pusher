@@ -85,7 +85,7 @@ class MailchimpEventPusher
 
         });
 
-        //TODO добавить удаление на какой-о флаг внутки передавайемой data, т.к. нет физического удаления
+        //TODO добавить удаление на какой-тоо флаг внутри передавайемой data, т.к. нет физического удаления
         Event::on($this->parent_class, ActiveRecord::EVENT_AFTER_DELETE, function ($event) {
             $sender = $event->sender;
             if ($sender instanceof $this->parent_class) {
