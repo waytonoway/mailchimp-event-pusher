@@ -20,14 +20,16 @@ class MailchimpManager
 {
     /** @var bool|\MailChimp\MailChimp  */
     private $mcAgent = false;
-    private $store_id = 'Gs_checkout_dev';
+    private $store_id = '';
 
     /**
      * MailchimpManager constructor.
+     * @param string $store_id
      */
-    public function __construct()
+    public function __construct(string $store_id)
     {
-        $this->mcAgent = new MailChimp();
+        $this->store_id = $store_id;
+        $this->mcAgent = new MailChimp;
     }
 
     /**
